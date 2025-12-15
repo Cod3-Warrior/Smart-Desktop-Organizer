@@ -1,0 +1,15 @@
+﻿  Determining projects to restore...
+  All projects are up-to-date for restore.
+  SmartDesktop.Core -> C:\MASTER\SmartDesktop Organizer\src\SmartDesktop.Core\bin\Debug\net8.0-windows\SmartDesktop.Core.dll
+C:\MASTER\SmartDesktop Organizer\src\SmartDesktopOrganizer\Controls\AppItem.xaml.cs(69,55): warning CS8604: Possible null reference argument for parameter 'adornedElement' in 'DragAdorner.DragAdorner(UIElement adornedElement, UIElement draggedElement, Point startPoint)'. [C:\MASTER\SmartDesktop Organizer\src\SmartDesktopOrganizer\SmartDesktopOrganizer_3wwhtypn_wpftmp.csproj]
+C:\MASTER\SmartDesktop Organizer\src\SmartDesktopOrganizer\Controls\AppItem.xaml.cs(69,55): warning CS8604: Possible null reference argument for parameter 'adornedElement' in 'DragAdorner.DragAdorner(UIElement adornedElement, UIElement draggedElement, Point startPoint)'. [C:\MASTER\SmartDesktop Organizer\src\SmartDesktopOrganizer\SmartDesktopOrganizer.csproj]
+  SmartDesktopOrganizer -> C:\MASTER\SmartDesktop Organizer\src\SmartDesktopOrganizer\bin\Debug\net8.0-windows\SmartDesktopOrganizer.dll
+
+Build succeeded.
+
+C:\MASTER\SmartDesktop Organizer\src\SmartDesktopOrganizer\Controls\AppItem.xaml.cs(69,55): warning CS8604: Possible null reference argument for parameter 'adornedElement' in 'DragAdorner.DragAdorner(UIElement adornedElement, UIElement draggedElement, Point startPoint)'. [C:\MASTER\SmartDesktop Organizer\src\SmartDesktopOrganizer\SmartDesktopOrganizer_3wwhtypn_wpftmp.csproj]
+C:\MASTER\SmartDesktop Organizer\src\SmartDesktopOrganizer\Controls\AppItem.xaml.cs(69,55): warning CS8604: Possible null reference argument for parameter 'adornedElement' in 'DragAdorner.DragAdorner(UIElement adornedElement, UIElement draggedElement, Point startPoint)'. [C:\MASTER\SmartDesktop Organizer\src\SmartDesktopOrganizer\SmartDesktopOrganizer.csproj]
+    2 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:06.70

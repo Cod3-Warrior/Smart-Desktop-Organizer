@@ -1,0 +1,36 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Test (Unit)
+      run: dotnet test tests/SmartDesktop.Tests.Unit --no-build --verbosity normal --configuration Release
+
+    # Note: UI Tests often require an interactive session. 
+    # For standard Github Actions runners, this might fail without special configuration.
+    # We include it here as a placeholder for a self-hosted runner or specialized config.
+    - name: Test (UI)
+      run: dotnet test tests/SmartDesktop.Tests.UI --no-build --verbosity normal --configuration Release
+      continue-on-error: true 

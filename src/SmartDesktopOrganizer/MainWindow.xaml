@@ -1,0 +1,71 @@
+<Window x:Class="SmartDesktopOrganizer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SmartDesktopOrganizer"
+        xmlns:controls="clr-namespace:SmartDesktopOrganizer.Controls"
+        mc:Ignorable="d"
+        Title="Smart Desktop"
+        WindowState="Maximized"
+        Background="#1E1E1E"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip">
+    
+    <!-- Keyboard shortcuts for Undo/Redo -->
+    <Window.InputBindings>
+        <KeyBinding Key="Z" Modifiers="Ctrl" Command="{Binding UndoCommand}"/>
+        <KeyBinding Key="Y" Modifiers="Ctrl" Command="{Binding RedoCommand}"/>
+    </Window.InputBindings>
+    
+    <Grid>
+        <!-- Desktop Icons Area -->
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
+            <ItemsControl ItemsSource="{Binding Items}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Margin="20" HorizontalAlignment="Left" IsItemsHost="True"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <controls:AppItem Margin="10" 
+                                       DataContext="{Binding}"
+                                       IsJiggling="{Binding IsJiggling}"
+                                       IsGhost="{Binding IsGhost}"
+                                       /> 
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Settings Button (Bottom Right) -->
+        <Button x:Name="SettingsButton" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Bottom"
+                Margin="0,0,20,20"
+                Width="40" Height="40"
+                Background="#44FFFFFF"
+                BorderBrush="Transparent"
+                Cursor="Hand"
+                ToolTip="Settings"
+                Click="SettingsButton_Click">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" 
+                            CornerRadius="20"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+            <TextBlock Text="⚙️" FontSize="20" Foreground="White"/>
+        </Button>
+
+        <!-- Folder Popup Overlay (Hidden by default) -->
+        <controls:FolderPopup x:Name="MainFolderPopup" Visibility="Collapsed"/>
+    </Grid>
+</Window>

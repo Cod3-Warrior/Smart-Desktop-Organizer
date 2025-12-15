@@ -1,0 +1,27 @@
+<Window x:Class="SmartDesktop.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SmartDesktop Organizer" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <StackPanel Grid.Column="0">
+             <Button x:Name="RefreshButton" Content="Refresh" AutomationProperties.AutomationId="RefreshBtn" Click="RefreshButton_Click" Height="30"/>
+             <TreeView x:Name="FolderTree" AutomationProperties.AutomationId="FolderTree">
+                 <TreeViewItem Header="Desktop" AutomationProperties.AutomationId="DesktopNode" IsExpanded="True">
+                     <TreeViewItem Header="Documents" AutomationProperties.AutomationId="DocumentsNode">
+                         <TreeViewItem Header="Projects" AutomationProperties.AutomationId="ProjectsNode"/>
+                     </TreeViewItem>
+                 </TreeViewItem>
+             </TreeView>
+        </StackPanel>
+
+        <ListView x:Name="FileGrid" Grid.Column="1" AutomationProperties.AutomationId="FileGrid" AllowDrop="True">
+            <ListViewItem Content="Shortcut 1" AutomationProperties.AutomationId="Shortcut1"/>
+            <ListViewItem Content="Shortcut 2" AutomationProperties.AutomationId="Shortcut2"/>
+        </ListView>
+    </Grid>
+</Window>

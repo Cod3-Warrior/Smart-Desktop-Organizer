@@ -1,0 +1,93 @@
+<UserControl x:Class="SmartDesktopOrganizer.Controls.AppItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:SmartDesktopOrganizer.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="80">
+    <UserControl.Resources>
+        <Style TargetType="Border" x:Key="IconBorderStyle">
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="Background" Value="#2C2C2C"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.3" Color="Black"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- Visibility converter for IsFolder -->
+        <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+    
+    <Grid Width="70" Height="90">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Icon Container -->
+        <Border Grid.Row="0" Width="60" Height="60" Style="{StaticResource IconBorderStyle}" Margin="0,0,0,5"
+                RenderTransformOrigin="0.5,0.5" x:Name="IconBorder">
+            <Border.RenderTransform>
+                 <RotateTransform Angle="0"/>
+            </Border.RenderTransform>
+            <Border.Resources>
+                <Storyboard x:Key="JiggleStoryboard" RepeatBehavior="Forever" AutoReverse="True">
+                    <DoubleAnimation Storyboard.TargetName="IconBorder" 
+                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                     From="-2" To="2" Duration="0:0:0.1"/>
+                </Storyboard>
+            </Border.Resources>
+            
+            <Grid>
+                <!-- Normal App Icon (shown when NOT a folder) -->
+                <Image Source="{Binding IconImage}" Width="32" Height="32" 
+                       Visibility="{Binding IsFolder, Converter={StaticResource BoolToVis}, ConverterParameter=Inverse}"
+                       x:Name="ImgIcon" />
+                
+                <!-- Folder Preview Grid (shown when IS a folder) -->
+                <Grid Visibility="{Binding IsFolder, Converter={StaticResource BoolToVis}}" Margin="6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Mini icons from InnerItems -->
+                    <Border Grid.Row="0" Grid.Column="0" Background="#3C3C3C" CornerRadius="4" Margin="2">
+                        <Image Source="{Binding InnerItems[0].IconImage}" Width="18" Height="18" Stretch="Uniform"/>
+                    </Border>
+                    <Border Grid.Row="0" Grid.Column="1" Background="#3C3C3C" CornerRadius="4" Margin="2">
+                        <Image Source="{Binding InnerItems[1].IconImage}" Width="18" Height="18" Stretch="Uniform"/>
+                    </Border>
+                    <Border Grid.Row="1" Grid.Column="0" Background="#3C3C3C" CornerRadius="4" Margin="2">
+                        <Image Source="{Binding InnerItems[2].IconImage}" Width="18" Height="18" Stretch="Uniform"/>
+                    </Border>
+                    <Border Grid.Row="1" Grid.Column="1" Background="#3C3C3C" CornerRadius="4" Margin="2">
+                        <Image Source="{Binding InnerItems[3].IconImage}" Width="18" Height="18" Stretch="Uniform"/>
+                    </Border>
+                    
+                    <!-- Folder icon overlay if no items -->
+                    <TextBlock Grid.RowSpan="2" Grid.ColumnSpan="2" 
+                               Text="📁" FontSize="28" 
+                               VerticalAlignment="Center" HorizontalAlignment="Center"
+                               Foreground="White" Opacity="0.3"/>
+                </Grid>
+            </Grid>
+        </Border>
+        
+        <!-- Label -->
+        <TextBlock Grid.Row="1" Text="{Binding Name}" 
+                   HorizontalAlignment="Center" 
+                   Foreground="White" 
+                   FontSize="11" 
+                   TextTrimming="CharacterEllipsis"
+                   VerticalAlignment="Top"/>
+    </Grid>
+</UserControl>
+

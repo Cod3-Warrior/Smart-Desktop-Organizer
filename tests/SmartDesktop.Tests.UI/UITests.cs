@@ -1,5 +1,6 @@
 using FlaUI.Core.Input;
 using FlaUI.Core.WindowsAPI;
+using FlaUI.Core.AutomationElements;
 using Xunit;
 using System.Threading;
 

@@ -14,7 +14,8 @@ namespace SmartDesktop.Tests.UI
 
         public AutomationBase()
         {
-            var appPath = Path.GetFullPath(@"..\..\..\..\src\SmartDesktop.UI\bin\Debug\net8.0-windows\SmartDesktop.UI.exe");
+            // Assumes running from bin\Release\net8.0-windows, needs 5 levels up to root, then down to win-x64 output
+            var appPath = Path.GetFullPath(@"..\..\..\..\..\src\SmartDesktopOrganizer\bin\Release\net8.0-windows\win-x64\SmartDesktopOrganizer.exe");
             
             // Check if app exists before trying to launch (for test robustness during dev)
             if (!File.Exists(appPath))

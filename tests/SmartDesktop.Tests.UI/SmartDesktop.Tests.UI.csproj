@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\SmartDesktop.UI\SmartDesktop.UI.csproj" />
+    <ProjectReference Include="..\..\src\SmartDesktopOrganizer\SmartDesktopOrganizer.csproj" />
   </ItemGroup>
 
 </Project>

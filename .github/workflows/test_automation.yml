@@ -20,17 +20,17 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore src/SmartDesktop.sln
 
     - name: Build
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build src/SmartDesktop.sln --no-restore --configuration Release
 
     - name: Test (Unit)
-      run: dotnet test tests/SmartDesktop.Tests.Unit --no-build --verbosity normal --configuration Release
+      run: dotnet test src/SmartDesktop.sln --no-build --verbosity normal --configuration Release --filter FullyQualifiedName~Unit
 
     # Note: UI Tests often require an interactive session. 
     # For standard Github Actions runners, this might fail without special configuration.
     # We include it here as a placeholder for a self-hosted runner or specialized config.
     - name: Test (UI)
-      run: dotnet test tests/SmartDesktop.Tests.UI --no-build --verbosity normal --configuration Release
+      run: dotnet test src/SmartDesktop.sln --no-build --verbosity normal --configuration Release --filter FullyQualifiedName~UI
       continue-on-error: true 

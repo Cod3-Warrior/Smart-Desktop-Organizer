@@ -25,4 +25,4 @@ jobs:
       run: dotnet build src/SmartDesktop.sln --no-restore
 
     - name: Test
-      run: dotnet test src/SmartDesktop.sln --no-build --verbosity normal
+      run: dotnet test src/SmartDesktop.sln --no-build --verbosity normal --filter FullyQualifiedName~Unit

@@ -116,19 +116,23 @@ public partial class MainViewModel : ObservableObject
         if (source == null || target == null) return;
         if (source.FullPath == target.FullPath) return; // Same item, do nothing
         
-        // Find actual items in the collection (by FullPath since reference may differ)
-        var actualSource = Items.FirstOrDefault(x => x.FullPath == source.FullPath || x == source);
-        var actualTarget = Items.FirstOrDefault(x => x.FullPath == target.FullPath || x == target);
+        // Find actual items in the collection
+        // Prioritize reference matching (works for folders with virtual paths)
+        var actualSource = Items.FirstOrDefault(x => x == source) 
+                        ?? Items.FirstOrDefault(x => !string.IsNullOrEmpty(x.FullPath) && x.FullPath == source.FullPath);
+        var actualTarget = Items.FirstOrDefault(x => x == target) 
+                        ?? Items.FirstOrDefault(x => !string.IsNullOrEmpty(x.FullPath) && x.FullPath == target.FullPath);
         
         if (actualSource == null || actualTarget == null)
         {
-            System.Diagnostics.Debug.WriteLine($"CreateFolder FAILED: source={actualSource != null}, target={actualTarget != null}");
+            System.Diagnostics.Debug.WriteLine($"CreateFolder FAILED: source={actualSource != null} ({source?.Name}), target={actualTarget != null} ({target?.Name}), source.FullPath={source?.FullPath}, target.FullPath={target?.FullPath}");
             return;
         }
         
         // If target is already a folder, add source to it
         if (actualTarget.IsFolder)
         {
+            System.Diagnostics.Debug.WriteLine($"CreateFolder: Target '{actualTarget.Name}' is folder, adding '{actualSource.Name}' to it");
             AddToFolder(actualSource, actualTarget);
             return;
         }
@@ -151,6 +155,7 @@ public partial class MainViewModel : ObservableObject
         var targetItem = ConvertToDesktopItem(actualTarget);
         var suggestedName = _folderNamingService?.SuggestFolderName(new[] { sourceItem, targetItem }) ?? "Folder";
         var folder = new AppItemViewModel(suggestedName, "Folder", isFolder: true);
+        folder.FullPath = $"folder://{Guid.NewGuid()}"; // Unique identifier for folders
         
         // Copy items into folder (with full data)
         var sourceCopy = CloneItem(actualSource);
@@ -190,18 +195,35 @@ public partial class MainViewModel : ObservableObject
     {
         if (!folder.IsFolder || item == folder) return;
         
-        int itemIndex = Items.IndexOf(item);
-        if (itemIndex == -1) return;
+        // Find actual item - prioritize reference matching (same approach as CreateFolder)
+        var actualItem = Items.FirstOrDefault(x => x == item) 
+                      ?? Items.FirstOrDefault(x => !string.IsNullOrEmpty(x.FullPath) && x.FullPath == item.FullPath);
+        if (actualItem == null)
+        {
+            System.Diagnostics.Debug.WriteLine($"AddToFolder FAILED: item '{item.Name}' not found in Items. Path={item.FullPath}");
+            return;
+        }
         
-        var itemCopy = CloneItem(item);
+        // Check if already in folder (prevent duplicates)
+        if (folder.InnerItems.Any(x => x.FullPath == item.FullPath))
+        {
+            System.Diagnostics.Debug.WriteLine($"AddToFolder: item already in folder. Path={item.FullPath}");
+            return;
+        }
+        
+        int itemIndex = Items.IndexOf(actualItem);
+        
+        var itemCopy = CloneItem(actualItem);
         folder.InnerItems.Add(itemCopy);
-        Items.Remove(item);
+        Items.Remove(actualItem);
+        
+        System.Diagnostics.Debug.WriteLine($"AddToFolder SUCCESS: Added '{actualItem.Name}' to folder '{folder.Name}'. Folder now has {folder.InnerItems.Count} items.");
         
         _undoStack.Push(new UndoAction
         {
             Type = UndoActionType.AddToFolder,
             Folder = folder,
-            OriginalItems = new List<AppItemViewModel> { item },
+            OriginalItems = new List<AppItemViewModel> { actualItem },
             OriginalIndices = new List<int> { itemIndex }
         });
         _redoStack.Clear();

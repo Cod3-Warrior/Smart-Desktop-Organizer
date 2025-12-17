@@ -13,5 +13,6 @@ public class DesktopItem
     
     // Folder support
     public bool IsFolder { get; set; }
+    public bool IsEnlarged { get; set; } = true; // Default to enlarged mode
     public List<DesktopItem> InnerItems { get; set; } = new();
 }

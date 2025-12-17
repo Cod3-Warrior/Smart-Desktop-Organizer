@@ -61,6 +61,7 @@ public partial class MainViewModel : ObservableObject
         var vm = new AppItemViewModel(item.Name, item.IsFolder ? "Folder" : "File", item.IsFolder);
         vm.FullPath = item.FullPath;
         vm.IconImage = item.Icon;
+        vm.IsEnlarged = item.IsEnlarged; // Persist folder mode
         
         foreach (var inner in item.InnerItems)
         {
@@ -97,7 +98,8 @@ public partial class MainViewModel : ObservableObject
             Name = vm.Name,
             FullPath = vm.FullPath,
             Size = 0,
-            IsFolder = vm.IsFolder
+            IsFolder = vm.IsFolder,
+            IsEnlarged = vm.IsEnlarged // Persist folder mode
         };
         
         foreach (var inner in vm.InnerItems)

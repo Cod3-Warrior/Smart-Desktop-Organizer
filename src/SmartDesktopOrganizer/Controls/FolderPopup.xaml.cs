@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -37,6 +38,27 @@ public partial class FolderPopup : UserControl
             var appItem = new AppItem();
             appItem.DataContext = item;
             appItem.Margin = new Thickness(10);
+            
+            // Single-click to launch app (Bug Fix #1)
+            appItem.MouseLeftButtonUp += (s, e) =>
+            {
+                if (item.IsFolder) return; // nested folders handled by AppItem
+                if (!string.IsNullOrEmpty(item.FullPath))
+                {
+                    try
+                    {
+                        Process.Start(new ProcessStartInfo 
+                        { 
+                            FileName = item.FullPath, 
+                            UseShellExecute = true 
+                        });
+                        this.Visibility = Visibility.Collapsed; // close overlay
+                    }
+                    catch { }
+                }
+                e.Handled = true;
+            };
+            
             ItemsPanel.Children.Add(appItem);
         }
     }

@@ -88,7 +88,7 @@ public partial class FolderPopup : UserControl
             // Validate name
             if (string.IsNullOrWhiteSpace(newName))
             {
-                newName = "Folder"; // Default if empty
+                newName = "Folder";
             }
             
             // Update the folder name

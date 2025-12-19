@@ -59,6 +59,7 @@ public partial class AppItem : UserControl
                 var window = Window.GetWindow(this);
                 AdornerLayer? adornerLayer = null;
                 DragAdorner? dragAdorner = null;
+                DragEventHandler? dragOverHandler = null;
                 
                 if (window != null)
                 {
@@ -69,12 +70,13 @@ public partial class AppItem : UserControl
                         dragAdorner = new DragAdorner(window.Content as UIElement, this, startPos);
                         adornerLayer.Add(dragAdorner);
                         
-                        // Update adorner position during drag
-                        window.PreviewDragOver += (s, args) =>
+                        // Store handler reference to remove it later (fix memory leak)
+                        dragOverHandler = (s, args) =>
                         {
                             var pos = args.GetPosition(window.Content as UIElement);
                             dragAdorner.UpdatePosition(pos);
                         };
+                        window.PreviewDragOver += dragOverHandler;
                     }
                 }
                 
@@ -86,6 +88,12 @@ public partial class AppItem : UserControl
                 var data = new DataObject(typeof(AppItemViewModel), vm);
                 DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
                 
+                // Clean up: remove event handler to prevent memory leak
+                if (window != null && dragOverHandler != null)
+                {
+                    window.PreviewDragOver -= dragOverHandler;
+                }
+
                 // Cleanup adorner
                 if (adornerLayer != null && dragAdorner != null)
                 {
@@ -190,7 +198,10 @@ public partial class AppItem : UserControl
                         UseShellExecute = true
                     });
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to launch app: {ex.Message}");
+                }
             }
         }
     }

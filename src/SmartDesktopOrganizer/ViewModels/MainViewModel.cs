@@ -236,14 +236,29 @@ public partial class MainViewModel : ObservableObject
     {
         if (!folder.IsFolder) return;
         
-        folder.InnerItems.Remove(item);
-        Items.Add(CloneItem(item));
+        // Find the actual item in folder
+        var actualItem = folder.InnerItems.FirstOrDefault(x => x == item || x.FullPath == item.FullPath);
+        if (actualItem == null) return;
+        
+        int folderIndex = Items.IndexOf(folder);
+        
+        folder.InnerItems.Remove(actualItem);
+        Items.Add(CloneItem(actualItem));
+        
+        // Push undo action
+        _undoStack.Push(new UndoAction
+        {
+            Type = UndoActionType.RemoveFromFolder,
+            Folder = folder,
+            OriginalItems = new List<AppItemViewModel> { actualItem },
+            OriginalIndices = new List<int> { folderIndex }
+        });
+        _redoStack.Clear();
         
         // If folder now has only 1 item, dissolve it
         if (folder.InnerItems.Count == 1)
         {
             var remaining = folder.InnerItems[0];
-            int folderIndex = Items.IndexOf(folder);
             Items.Remove(folder);
             Items.Insert(folderIndex, CloneItem(remaining));
         }
@@ -254,6 +269,7 @@ public partial class MainViewModel : ObservableObject
         var clone = new AppItemViewModel(source.Name, source.IconKind, source.IsFolder);
         clone.FullPath = source.FullPath;
         clone.IconImage = source.IconImage;
+        clone.IsEnlarged = source.IsEnlarged; // Preserve folder display mode
         foreach (var inner in source.InnerItems)
         {
             clone.InnerItems.Add(CloneItem(inner));
@@ -293,6 +309,16 @@ public partial class MainViewModel : ObservableObject
                     Items.Insert(idx, action.OriginalItems[i]);
                 }
                 break;
+                
+            case UndoActionType.RemoveFromFolder:
+                // Add item back to folder, remove from desktop
+                foreach (var item in action.OriginalItems!)
+                {
+                    var match = Items.FirstOrDefault(x => x.FullPath == item.FullPath);
+                    if (match != null) Items.Remove(match);
+                    action.Folder!.InnerItems.Add(CloneItem(item));
+                }
+                break;
         }
         
         _redoStack.Push(action);
@@ -320,6 +346,16 @@ public partial class MainViewModel : ObservableObject
                 {
                     Items.Remove(item);
                     action.Folder!.InnerItems.Add(CloneItem(item));
+                }
+                break;
+                
+            case UndoActionType.RemoveFromFolder:
+                // Remove from folder again, add back to desktop
+                foreach (var item in action.OriginalItems!)
+                {
+                    var match = action.Folder!.InnerItems.FirstOrDefault(x => x.FullPath == item.FullPath);
+                    if (match != null) action.Folder.InnerItems.Remove(match);
+                    Items.Add(CloneItem(item));
                 }
                 break;
         }

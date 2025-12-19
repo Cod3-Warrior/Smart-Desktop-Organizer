@@ -31,6 +31,10 @@ public partial class AppItemViewModel : ObservableObject
     [ObservableProperty]
     private bool _isRenaming;
 
+    // For hybrid folder mode (default: enlarged)
+    [ObservableProperty]
+    private bool _isEnlarged = true;
+
     // For folders
     public ObservableCollection<AppItemViewModel> InnerItems { get; } = new();
 
